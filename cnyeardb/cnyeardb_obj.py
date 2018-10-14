@@ -1,12 +1,12 @@
 import re
+import os
 import sys
 import sqlite3
-
-def debug(foo):
-    print(foo)
+from . import pkg_dir
+from .tools import debug
 
 class Cnyeardb(object):
-    def __init__(self, dbpath="./cnyeardb.db"):
+    def __init__(self, dbpath=os.path.join(pkg_dir,'cnyeardb.db')):
         self.sqlbase = '''SELECT 
             tb_regnal_postq.id,
             tb_dynasty_c1_postq.name,
@@ -83,6 +83,7 @@ class Cnyeardb(object):
         s += " OR tb_dynasty_c2_postq.alias REGEXP '%s'" %rgnla if rgnla else ""
         s = "(%s)" %s
         sqlcmd = sqlcmd_dnst + ' AND ' + s
+        debug(sqlcmd)
         return sqlcmd
 
     def lkp_rgnl(self, d, rgnl, rgnla='', da='', d1='', d1a='', d2='', d2a=''):
@@ -168,17 +169,4 @@ class Cnyeardb(object):
         m = self.recpl_rgnl.search(s)
         if not m: return None
         return [m.group(1),m.group(2),m.group(3),m.group(4),m.group(5)]
-
-if __name__ == '__main__':
-    cnyeardb_handler = Cnyeardb()
-    print(cnyeardb_handler.lkp_dnst('清',r'\b清\b',d1='後金·清'))
-    print(cnyeardb_handler.lkp_rgnl('清','天聰',da=r'\b清\b'))
-    print(cnyeardb_handler.lkp_dnst('清',da=r'\b清\b'))
-    print(cnyeardb_handler.lkp_dnst('清'))
-    print(cnyeardb_handler.mtch_dnst('三國吳'))
-    print(cnyeardb_handler.mtch_dnst('南朝宋'))
-    print(cnyeardb_handler.mtch_dnst('唐'))
-    print(cnyeardb_handler.mtch_dnst('清'))
-    print(cnyeardb_handler.mtch_rgnl('清乾隆十二年'))
-    print(cnyeardb_handler.mtch_rgnl('清十二年'))
 
