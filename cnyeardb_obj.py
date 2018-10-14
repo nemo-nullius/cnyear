@@ -93,9 +93,89 @@ class Cnyeardb(object):
         self.c.execute(sqlcmd)
         return self.c.fetchall()
 
+    def mkrecpl_dnst(self):
+        try:
+            if self.recpl_dnst: return self.recpl_dnst # AttributeError then do the following
+        except:
+            pass
+        self.c.execute('''SELECT name, alias FROM tb_dynasty_postq''')
+        sqlrd = self.c.fetchall()
+        self.c.execute('''SELECT name, alias FROM tb_dynasty_c1_postq''')
+        sqlrd1 = self.c.fetchall()
+        self.c.execute('''SELECT name, alias FROM tb_dynasty_c2_postq''')
+        sqlrd2 = self.c.fetchall()
+        exprd = []
+        exprd1 = []
+        exprd2 = []
+        for t in sqlrd:
+            exprd.append(t[0])
+            exprd += t[1].split(' ') if t[1] else []
+        for t in sqlrd1:
+            exprd1.append(t[0])
+            exprd1 += t[1].split(' ') if t[1] else []
+        for t in sqlrd2:
+            exprd2.append(t[0])
+            exprd2 += t[1].split(' ') if t[1] else []
+        expr = '(%s)?(%s)?(%s)' %('|'.join(exprd1),'|'.join(exprd2),'|'.join(exprd))
+        self.recpl_dnst=re.compile(expr)
+        debug(self.recpl_dnst)
+        return self.recpl_dnst
+
+    def mtch_dnst(self, s):
+        recpl_dnst = self.mkrecpl_dnst()
+        m = recpl_dnst.match(s)
+        if not m: return None
+        return [m.group(1),m.group(2),m.group(3)]
+
+    def mkrecpl_rgnl(self):
+        try:
+            if self.recpl_rgnl: return self.recpl_rgnl # AttributeError then do the following
+        except:
+            pass
+        self.c.execute('''SELECT name, alias FROM tb_dynasty_postq''')
+        sqlrd = self.c.fetchall()
+        self.c.execute('''SELECT name, alias FROM tb_dynasty_c1_postq''')
+        sqlrd1 = self.c.fetchall()
+        self.c.execute('''SELECT name, alias FROM tb_dynasty_c2_postq''')
+        sqlrd2 = self.c.fetchall()
+        self.c.execute('''SELECT regnal, alias FROM tb_regnal_postq''')
+        sqlrr = self.c.fetchall()
+        exprd = []
+        exprd1 = []
+        exprd2 = []
+        exprr = []
+        for t in sqlrd:
+            exprd.append(t[0])
+            exprd += t[1].split(' ') if t[1] else []
+        for t in sqlrd1:
+            exprd1.append(t[0])
+            exprd1 += t[1].split(' ') if t[1] else []
+        for t in sqlrd2:
+            exprd2.append(t[0])
+            exprd2 += t[1].split(' ') if t[1] else []
+        for t in sqlrr:
+            exprr.append(t[0])
+            exprr += t[1].split(' ') if t[1] else []
+        expr = '(%s)?(%s)?(%s)(%s)' %('|'.join(exprd1),'|'.join(exprd2),'|'.join(exprd),'|'.join(exprr))
+        expr += '([元一二三四五六七八九十]+)年'
+        debug(expr)
+        self.recpl_rgnl=re.compile(expr)
+        debug(self.recpl_rgnl)
+        return self.recpl_rgnl
+
+    def mtch_rgnl(self, s):
+        recpl_rgnl = self.mkrecpl_rgnl()
+        m = recpl_rgnl.match(s)
+        if not m: return None
+        return [m.group(1),m.group(2),m.group(3),m.group(4),m.group(5)]
+
 if __name__ == '__main__':
     cnyeardb_handler = Cnyeardb()
     print(cnyeardb_handler.lkp_dnst('清',r'\b清\b',d1='後金·清'))
     print(cnyeardb_handler.lkp_rgnl('清','天聰',da=r'\b清\b'))
-
+    print(cnyeardb_handler.mtch_dnst('三國吳'))
+    print(cnyeardb_handler.mtch_dnst('南朝宋'))
+    print(cnyeardb_handler.mtch_dnst('唐'))
+    print(cnyeardb_handler.mtch_dnst('清'))
+    print(cnyeardb_handler.mtch_rgnl('清乾隆十二年'))
 
