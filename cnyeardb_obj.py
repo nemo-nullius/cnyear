@@ -38,6 +38,10 @@ class Cnyeardb(object):
         except Error as e:
             print(e)
             sys.exit(-1)
+        self.regp_dnst = self.mkregp_dnst()
+        self.regp_rgnl = self.mkregp_rgnl()
+        self.recpl_dnst = re.compile(self.regp_dnst)
+        self.recpl_rgnl = re.compile(self.regp_rgnl)
 
     def mksqlcmd_dnst(self,d,da='',d1='',d1a='',d2='',d2a=''):
         if not d: return None
@@ -93,9 +97,9 @@ class Cnyeardb(object):
         self.c.execute(sqlcmd)
         return self.c.fetchall()
 
-    def mkrecpl_dnst(self):
+    def mkregp_dnst(self):
         try:
-            if self.recpl_dnst: return self.recpl_dnst # AttributeError then do the following
+            if self.regp_dnst: return self.regp_dnst # AttributeError then do the following
         except:
             pass
         self.c.execute('''SELECT name, alias FROM tb_dynasty_postq''')
@@ -117,19 +121,17 @@ class Cnyeardb(object):
             exprd2.append(t[0])
             exprd2 += t[1].split(' ') if t[1] else []
         expr = '(%s)?(%s)?(%s)' %('|'.join(exprd1),'|'.join(exprd2),'|'.join(exprd))
-        self.recpl_dnst=re.compile(expr)
-        debug(self.recpl_dnst)
-        return self.recpl_dnst
+        debug(expr)
+        return expr
 
     def mtch_dnst(self, s):
-        recpl_dnst = self.mkrecpl_dnst()
-        m = recpl_dnst.match(s)
+        m = self.recpl_dnst.search(s)
         if not m: return None
         return [m.group(1),m.group(2),m.group(3)]
 
-    def mkrecpl_rgnl(self):
+    def mkregp_rgnl(self):
         try:
-            if self.recpl_rgnl: return self.recpl_rgnl # AttributeError then do the following
+            if self.regp_rgnl: return self.regp_rgnl # AttributeError then do the following
         except:
             pass
         self.c.execute('''SELECT name, alias FROM tb_dynasty_postq''')
@@ -154,18 +156,16 @@ class Cnyeardb(object):
             exprd2.append(t[0])
             exprd2 += t[1].split(' ') if t[1] else []
         for t in sqlrr:
-            exprr.append(t[0])
+            if t[0]:
+                exprr.append(t[0])
             exprr += t[1].split(' ') if t[1] else []
         expr = '(%s)?(%s)?(%s)(%s)' %('|'.join(exprd1),'|'.join(exprd2),'|'.join(exprd),'|'.join(exprr))
         expr += '([元一二三四五六七八九十]+)年'
         debug(expr)
-        self.recpl_rgnl=re.compile(expr)
-        debug(self.recpl_rgnl)
-        return self.recpl_rgnl
+        return expr
 
     def mtch_rgnl(self, s):
-        recpl_rgnl = self.mkrecpl_rgnl()
-        m = recpl_rgnl.match(s)
+        m = self.recpl_rgnl.search(s)
         if not m: return None
         return [m.group(1),m.group(2),m.group(3),m.group(4),m.group(5)]
 
@@ -173,9 +173,12 @@ if __name__ == '__main__':
     cnyeardb_handler = Cnyeardb()
     print(cnyeardb_handler.lkp_dnst('清',r'\b清\b',d1='後金·清'))
     print(cnyeardb_handler.lkp_rgnl('清','天聰',da=r'\b清\b'))
+    print(cnyeardb_handler.lkp_dnst('清',da=r'\b清\b'))
+    print(cnyeardb_handler.lkp_dnst('清'))
     print(cnyeardb_handler.mtch_dnst('三國吳'))
     print(cnyeardb_handler.mtch_dnst('南朝宋'))
     print(cnyeardb_handler.mtch_dnst('唐'))
     print(cnyeardb_handler.mtch_dnst('清'))
     print(cnyeardb_handler.mtch_rgnl('清乾隆十二年'))
+    print(cnyeardb_handler.mtch_rgnl('清十二年'))
 
