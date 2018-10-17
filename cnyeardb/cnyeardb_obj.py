@@ -3,10 +3,13 @@ import os
 import sys
 import sqlite3
 from . import pkg_dir
-from .tools import debug
 
 class Cnyeardb(object):
-    def __init__(self, dbpath=os.path.join(pkg_dir,'cnyeardb.db')):
+    def __init__(self, dbpath=os.path.join(pkg_dir,'cnyeardb.db'),debug=False):
+        if debug:
+            self.debugger = self.debugger_t
+        else:
+            self.debugger = self.debugger_f
         self.sqlbase = '''SELECT 
             tb_regnal_postq.id,
             tb_dynasty_c1_postq.name,
@@ -43,6 +46,16 @@ class Cnyeardb(object):
         self.recpl_dnst = re.compile(self.regp_dnst)
         self.recpl_rgnl = re.compile(self.regp_rgnl)
 
+    def debugger_t(self, foo):
+        print(foo)
+    def debugger_f(self, foo):
+        pass
+
+    def setdebug(self):
+        self.debugger = self.debugger_t
+    def unsetdebug(self):
+        self.debugger = self.debugger_f
+
     def mksqlcmd_dnst(self,d,da='',d1='',d1a='',d2='',d2a=''):
         if not d: return None
         sqld = ''
@@ -73,7 +86,7 @@ class Cnyeardb(object):
         sqlcmd = sqld
         if sqld1: sqlcmd = "%s AND %s" %(sqlcmd,sqld1)
         if sqld2: sqlcmd = "%s AND %s" %(sqlcmd,sqld2)
-        debug(sqlcmd)
+        self.debugger(sqlcmd)
         return sqlcmd
 
     def mksqlcmd_rgnl(self, d, rgnl, rgnla='', da='', d1='', d1a='', d2='', d2a=''):
@@ -83,7 +96,7 @@ class Cnyeardb(object):
         s += " OR tb_dynasty_c2_postq.alias REGEXP '%s'" %rgnla if rgnla else ""
         s = "(%s)" %s
         sqlcmd = sqlcmd_dnst + ' AND ' + s
-        debug(sqlcmd)
+        self.debugger(sqlcmd)
         return sqlcmd
 
     def lkp_rgnl(self, d, rgnl, rgnla='', da='', d1='', d1a='', d2='', d2a=''):
@@ -122,7 +135,7 @@ class Cnyeardb(object):
             exprd2.append(t[0])
             exprd2 += t[1].split(' ') if t[1] else []
         expr = '(%s)?(%s)?(%s)' %('|'.join(exprd1),'|'.join(exprd2),'|'.join(exprd))
-        debug(expr)
+        self.debugger(expr)
         return expr
 
     def mtch_dnst(self, s):
@@ -162,7 +175,7 @@ class Cnyeardb(object):
             exprr += t[1].split(' ') if t[1] else []
         expr = '(%s)?(%s)?(%s)(%s)' %('|'.join(exprd1),'|'.join(exprd2),'|'.join(exprd),'|'.join(exprr))
         expr += '([元一二三四五六七八九十]+)年'
-        debug(expr)
+        self.debugger(expr)
         return expr
 
     def mtch_rgnl(self, s):

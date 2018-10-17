@@ -1,2 +1,2 @@
-def debug(foo):
+def debugger(foo):
     print(foo)
