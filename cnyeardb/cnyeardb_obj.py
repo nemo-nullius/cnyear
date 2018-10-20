@@ -56,6 +56,11 @@ class Cnyeardb(object):
     def unsetdebug(self):
         self.debugger = self.debugger_f
 
+    def lkp_year(self, year):
+        sqlcmd = self.sqlbase + 'WHERE (tb_regnal_postq.ya <= %s) AND (tb_regnal_postq.yz >= %s)' %(year, year)
+        self.c.execute(sqlcmd)
+        return self.c.fetchall()
+
     def mksqlcmd_dnst(self,d,da='',d1='',d1a='',d2='',d2a=''):
         if not d: return None
         sqld = ''
