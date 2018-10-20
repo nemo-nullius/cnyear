@@ -124,6 +124,7 @@ class Cnyear(object):
             d = self.cnyear_m.group(3)
             rgnl = self.cnyear_m.group(4)
             lyear = self.cnyeardb_handler.lkp_rgnl(d, rgnl)
+            if not lyear: return (None, None, None)
             #TODO: if many results
             ya = int(lyear[0][12])
             yz = int(lyear[0][13])
@@ -142,6 +143,7 @@ class Cnyear(object):
             d = self.cnyear_m.group(3)
             rgnl = self.cnyear_m.group(4)
             lyear = self.cnyeardb_handler.lkp_rgnl(d, rgnl)
+            if not lyear: return (None, None, None)
             #TODO: if many results
             ya = int(lyear[0][12])
             yz = int(lyear[0][13])
@@ -156,6 +158,7 @@ class Cnyear(object):
             d = self.cnyear_m.group(3)
             rgnl = self.cnyear_m.group(4)
             lyear = self.cnyeardb_handler.lkp_rgnl(d, rgnl)
+            if not lyear: return (None, None, None)
             #Todo: if many results
             ya = int(lyear[0][12])
             yz = int(lyear[0][13])
@@ -200,13 +203,21 @@ class Cnyear(object):
         if intyear in (xxx, 1912): 
             if original year is correct, then original one; 
             else the correct one according to ldefaultydy or the last tyear in lyear
+        # SOME HINTS
+        0. xx 間 no changes
+        1. >= 1950 CE
+        2. in [1912, 1949) 民國
+        3. ==1949 original 民國 then 民國, else CE (i.e. default CE)
+        4. ldefaultydy ONLY takes effect when in (xxx, 1912) AND the original regnal year is UNCORRECT 
         '''
         if self.cnyear_kind == 'q2' or self.cnyear_kind == 'm2': #xx間
             return self.cnyear
         intyear,yz,check = self.cny2y_safe()
+        if not intyear:
+            return None
         if intyear >= 1950: # all to CE 
             if dig: return str(intyear)+'年'
-            else: return ''.join(dig2cn(x) for x in list(str(intyear)))+'年'
+            else: return ''.join(dig2cn(x) for x in str(intyear))+'年'
         elif intyear == 1949: # originally 民國 then 民國, else 1949
             if self.cnyear_kind == 'm0' or self.cnyear_kind == 'm1':
                 if dig: return '民國38年'
