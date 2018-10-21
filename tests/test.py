@@ -1,5 +1,8 @@
-from ..cnyeardb_obj import Cnyeardb
-from ..cnyear_obj import Cnyear
+from .context import cnyeardb
+
+Cnyeardb = cnyeardb.Cnyeardb
+Cnyear = cnyeardb.Cnyear
+
 cnyeardb_handler = Cnyeardb()
 cnyear = Cnyear('清宣統六年')
 print(cnyeardb_handler.lkp_dnst('清',r'\b清\b',d1='後金·清'))

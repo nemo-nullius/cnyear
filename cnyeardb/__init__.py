@@ -6,4 +6,5 @@ pkg_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 from .cnyeardb_obj import Cnyeardb
+from .cnyear_obj import Cnyear
 
