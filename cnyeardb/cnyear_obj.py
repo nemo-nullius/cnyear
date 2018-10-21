@@ -33,6 +33,7 @@ class Cnyear(object):
 
         self.cnyear_kind = ''
         self.cnyear_m = None
+        self.cnyear_realkind = None # will be set in y2cny
         if cq0.search(cnyear):
             self.cnyear_m = cq0.search(cnyear)
             self.cnyear_kind = 'q0'
@@ -216,16 +217,20 @@ class Cnyear(object):
         if not intyear:
             return None
         if intyear >= 1950: # all to CE 
+            self.cnyear_realkind = 'ce'
             if dig: return str(intyear)+'年'
             else: return ''.join(dig2cn(x) for x in str(intyear))+'年'
         elif intyear == 1949: # originally 民國 then 民國, else 1949
             if self.cnyear_kind == 'm0' or self.cnyear_kind == 'm1':
+                self.cnyear_realkind = 'm'
                 if dig: return '民國38年'
                 else: return '民國三十八年'
             else:
+                self.cnyear_realkind = 'm'
                 if dig: return '1949年'
                 else: return '一九四九年'
         elif intyear >= 1912: # all to 民國
+            self.cnyear_realkind = 'm'
             y_offset = intyear - 1911
             if y_offset == 1:
                 if dig: return '民國元年'
@@ -234,6 +239,7 @@ class Cnyear(object):
                 if dig: return '民國%s年' %y_offset
                 else: return '民國%s年' %dig2cn(y_offset)
         else: # all to REGNAL YEAR
+            self.cnyear_realkind = 'q'
             if check:
                 if dig: return self.__year_cn2dig(self.cnyear, ce=False, conv_1=False)
                 else: return self.__year_dig2cn(self.cnyear, ce=False)
@@ -269,6 +275,11 @@ class Cnyear(object):
                     return '%s%s%s年' %(dynasty, regnal, cny)
                 else: # lyear==[]
                     return None
+
+    def get_year_realkind(self):
+        if not self.cnyear_realkind:
+            self.y2cny()
+        return self.cnyear_realkind
 
     def ycn2dig(self, conv_1=False):
         '''convert 清乾隆十二年 清乾隆12年

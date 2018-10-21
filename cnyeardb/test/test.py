@@ -52,3 +52,10 @@ test_cnyear_y2cny('清宣統四十一年',ldefaultdy=['明'],dig=True)
 test_cnyear_y2cny('明宣統四十一年',ldefaultdy=['明'])
 test_cnyear_y2cny('民國上年',ldefaultdy=['明'])
 
+print('\n')
+x = Cnyear('明崇禎二十八年')
+print(x.get_year_realkind())
+print(x.y2cny(ldefaultdy=['南明']))
+print(x.y2cny(ldefaultdy=['清']))
+print(x.get_year_realkind())
+
