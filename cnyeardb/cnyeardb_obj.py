@@ -2,10 +2,10 @@ import re
 import os
 import sys
 import sqlite3
-from . import pkg_dir
+from . import CNYEARDB_PATH
 
 class Cnyeardb(object):
-    def __init__(self, dbpath=os.path.join(pkg_dir,'cnyeardb.db'),debug=False):
+    def __init__(self, dbpath=CNYEARDB_PATH,debug=False):
         if debug:
             self.debugger = self.debugger_t
         else:
