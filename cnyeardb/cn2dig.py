@@ -168,3 +168,4 @@ if __name__ == '__main__':
     print(year_cn2dig('乾隆六十年'))
     print(year_cn2dig('民國二十八年'))
     print(year_cn2dig('清咸豐間'))
+    print(cn2dig('清'))

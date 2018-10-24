@@ -59,6 +59,44 @@ class Cnyear(object):
             self.cnyear_m = cce1.search(cnyear)
             self.cnyear_kind = 'ce1'
 
+    def get_year_component(self):
+        if self.cnyear_kind == 'q0' or self.cnyear_kind == 'q1':
+            return (self.cnyear_kind, self.cnyear_m.group(3),self.cnyear_m.group(4),self.cnyear_m.group(5))
+        if self.cnyear_kind == 'q2':
+            return (self.cnyear_kind, self.cnyear_m.group(3),self.cnyear_m.group(4),'間')
+        if self.cnyear_kind == 'm0' or self.cnyear_kind == 'm1':
+            return (self.cnyear_kind, '民國',None,self.cnyear_m.group(1))
+        if self.cnyear_kind == 'm2':
+            return (self.cnyear_kind, '民國',None,'間')
+        if self.cnyear_kind == 'ce0' or self.cnyear_kind == 'ce1':
+            return (self.cnyear_kind, 'ce',None,self.cnyear_m.group(1))
+
+    def get_year_offset(self, dig=False):
+        '''To get year offset, without '年' behind
+        清光緒二十年 二十
+        清乾隆元年 元
+        清光緒二十年 20
+        清乾隆元年 1
+        民國間 間
+        一九八九年 一九八九'''
+        if self.cnyear_kind[-1] != '2': # not '間'
+            offset = self.get_year_component()[3]
+            if not dig:
+                if self.cnyear_kind[:-1] != 'ce':
+                    return self.__year_dig2cn(offset+'年', ce=False)[:-1]
+                else: # ce
+                    return self.__year_dig2cn(offset+'年', ce=True)[:-1]
+            else: # dig
+                if self.cnyear_kind[:-1] != 'ce':
+                    return self.__year_cn2dig(offset+'年', ce=False, conv_1=True)[:-1]
+                else: # ce
+                    return self.__year_cn2dig(offset+'年', ce=True)[:-1]
+        else:
+            return '間'
+
+
+
+
     def cny2y(self):
         '''deprecated, use cny2y_safe instead'''
         if self.cnyear_kind == 'q0':
