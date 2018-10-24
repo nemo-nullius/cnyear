@@ -94,63 +94,7 @@ class Cnyear(object):
         else:
             return '間'
 
-
-
-
     def cny2y(self):
-        '''deprecated, use cny2y_safe instead'''
-        if self.cnyear_kind == 'q0':
-            d = self.cnyear_m.group(3)
-            rgnl = self.cnyear_m.group(4)
-            lyear = self.cnyeardb_handler.lkp_rgnl(d, rgnl)
-            #TODO: if many results
-            ya = int(lyear[0][12])
-            yz = int(lyear[0][13])
-            yoffset_ch = self.cnyear_m.group(5)
-            if yoffset_ch == '元':
-                yoffset = 1
-            else:
-                yoffset = cn2dig(yoffset_ch)
-            return (ya+yoffset-1, None)
-        if self.cnyear_kind == 'q1':
-            d = self.cnyear_m.group(3)
-            rgnl = self.cnyear_m.group(4)
-            lyear = self.cnyeardb_handler.lkp_rgnl(d, rgnl)
-            #TODO: if many results
-            ya = int(lyear[0][12])
-            yz = int(lyear[0][13])
-            yoffset = int(self.cnyear_m.group(5))
-            return (ya+yoffset-1, None)
-        if self.cnyear_kind == 'q2':
-            d = self.cnyear_m.group(3)
-            rgnl = self.cnyear_m.group(4)
-            lyear = self.cnyeardb_handler.lkp_rgnl(d, rgnl)
-            #Todo: if many results
-            ya = int(lyear[0][12])
-            yz = int(lyear[0][13])
-            return (ya,yz)
-        if self.cnyear_kind == 'm0':
-            yoffset_ch = self.cnyear_m.group(1)
-            if yoffset_ch == '元':
-                yoffset = 1
-            else:
-                yoffset = cn2dig(yoffset_ch)
-            return (1911+yoffset, None)
-        if self.cnyear_kind == 'm1':
-            yoffset_ch = self.cnyear_m.group(1)
-            yoffset = int(yoffset_ch)
-            return (1911+yoffset, None)
-        if self.cnyear_kind == 'm2':
-            return (1912, 1949)
-        if self.cnyear_kind == 'ce0':
-            ych = self.cnyear_m.group(1)
-            return (int(''.join([str(cn2dig(x)) for x in ych])),None) #一九五九年
-        if self.cnyear_kind == 'ce1':
-            ych = self.cnyear_m.group(1)
-            return (int(ych), None)
-        return (None, None)
-
-    def cny2y_safe(self):
         '''
         return (ya,yz,check)
         if check == false: this regnal year is not correct
@@ -252,7 +196,7 @@ class Cnyear(object):
         if self.cnyear_kind == 'q2' or self.cnyear_kind == 'm2': #xx間
             self.cnyear_realkind = self.cnyear_kind[:-1]
             return self.cnyear
-        intyear,yz,check = self.cny2y_safe()
+        intyear,yz,check = self.cny2y()
         if not intyear:
             return None
         if intyear >= 1950: # all to CE 
