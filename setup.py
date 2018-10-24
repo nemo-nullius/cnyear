@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
         name='cnyear',
-        version = '0.0.1',
+        version = '0.0.4',
         description = 'A tool for conversion between Chinese year and CE.',
         author = 'Nemo',
         author_email = 'nonellf@gmail.com',
@@ -19,5 +19,8 @@ setup(
             ],
         keywords = 'Chinese regnal year CE conversion',
         packages = find_packages(exclude=['tests']),
+        package_data = {
+            # If package cnyeardb contains *.db, include it
+            'cnyeardb':['*.db']},
         )
 
