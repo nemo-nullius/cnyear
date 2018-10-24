@@ -71,7 +71,7 @@ class Cnyear(object):
         if self.cnyear_kind == 'ce0' or self.cnyear_kind == 'ce1':
             return (self.cnyear_kind, 'ce',None,self.cnyear_m.group(1))
 
-    def get_year_offset(self, dig=False):
+    def get_year_offset(self, dig=False, conv_1=False):
         '''To get year offset, without '年' behind
         清光緒二十年 二十
         清乾隆元年 元
@@ -88,7 +88,7 @@ class Cnyear(object):
                     return self.__year_dig2cn(offset+'年', ce=True)[:-1]
             else: # dig
                 if self.cnyear_kind[:-1] != 'ce':
-                    return self.__year_cn2dig(offset+'年', ce=False, conv_1=True)[:-1]
+                    return self.__year_cn2dig(offset+'年', ce=False, conv_1=conv_1)[:-1]
                 else: # ce
                     return self.__year_cn2dig(offset+'年', ce=True)[:-1]
         else:
@@ -250,6 +250,7 @@ class Cnyear(object):
         4. ldefaultydy ONLY takes effect when in (xxx, 1912) AND the original regnal year is UNCORRECT 
         '''
         if self.cnyear_kind == 'q2' or self.cnyear_kind == 'm2': #xx間
+            self.cnyear_realkind = self.cnyear_kind[:-1]
             return self.cnyear
         intyear,yz,check = self.cny2y_safe()
         if not intyear:
