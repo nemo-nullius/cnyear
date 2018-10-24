@@ -1,8 +1,8 @@
 #-*-coding:utf-8-*-
-from .context import cnyeardb
+from .context import cnyear
 
-Cnyeardb = cnyeardb.Cnyeardb
-Cnyear = cnyeardb.Cnyear
+Cnyeardb = cnyear.Cnyeardb
+Cnyear = cnyear.Cnyear
 
 
 if __name__ == '__main__':

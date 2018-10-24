@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
         name='cnyear',
-        version = '0.0.7',
+        version = '0.0.8',
         description = 'A tool for conversion between Chinese year and CE.',
         author = 'Nemo',
         author_email = 'nonellf@gmail.com',
