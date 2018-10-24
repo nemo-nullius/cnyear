@@ -79,3 +79,18 @@ print(Cnyear('一九三〇年').get_year_offset(dig=True))
 print(Cnyear('清康熙間').get_year_offset(dig=True))
 print(Cnyear('民國間').get_year_offset(dig=True))
 
+print(Cnyear('清雍正間abcdefg').cnyear_raw)
+print(Cnyear('清雍正八年13232').cnyear_raw)
+print(Cnyear('清雍正8年13232').cnyear_raw)
+print(Cnyear('民國元年13232').cnyear_raw)
+print(Cnyear('民國25年13232').cnyear_raw)
+print(Cnyear('1825年13232').cnyear_raw)
+print(Cnyear('二零二五年13232').cnyear_raw)
+
+print(Cnyear('明崇禎元年9999').get_year_raw())
+print(Cnyear('明崇禎1年9999').get_year_raw())
+print(Cnyear('清乾隆間九月二十八日9999').get_year_raw())
+print(Cnyear('1995年9999abcdefg').get_year_raw())
+print(Cnyear('民國1年年9999abcdefg').get_year_raw())
+print(Cnyear('abcdefg民國間9999abcdefg').get_year_raw())
+
