@@ -1,11 +1,16 @@
 from setuptools import setup, find_packages
 
+def readme_file():
+    with open("README.rst", encoding='utf-8') as rf:
+        return rf.read()
+
 setup(
         name='cnyear',
-        version = '0.0.11',
+        version = '0.0.12',
         description = 'A tool for conversion between Chinese year and CE.',
         author = 'Nemo',
         author_email = 'nonellf@gmail.com',
+        long_description=readme_file(),
         url = 'https://github.com/nemo-nullius/cnyear',
         license = 'GPLv3',
         classifiers = [
